@@ -7,7 +7,7 @@
     "start": "nodemon index.js",
     "task1": "nodemon src/task1.js",
     "task2": "nodemon src/task2.js",
-    "build": "babel src -d dist --presets es2015"
+    "build": "babel src -d dist"
   },
   "repository": {
     "type": "git",
@@ -24,9 +24,10 @@
   },
   "homepage": "https://github.com/KanstantsinSusla/node_mentoring#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-es2015": "^6.24.1",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.6",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
