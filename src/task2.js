@@ -1,5 +1,5 @@
-import { csv } from 'csvtojson';
-import { fs } from 'fs';
+import csv from 'csvtojson';
+import fs from 'fs';
 import { pipeline } from 'stream';
 
 const sourceDataDir = './data/csv';

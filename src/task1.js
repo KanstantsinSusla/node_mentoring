@@ -1,7 +1,7 @@
 process.stdin.setEncoding('utf8');
 
 process.stdin.on('readable', () => {
-	let inputData;
+	let chunk;
 
 	while ((chunk = process.stdin.read()) !== null) {
 		let reversedChunk = reverseChunk(chunk); 
