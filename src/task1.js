@@ -6,19 +6,19 @@ process.stdin.on('readable', () => {
 	let inputData;
 
 	while ((chunk = process.stdin.read()) !== null) {
-		var reversedChunk = reverseString(chunk); 
+		var reversedChunk = reverseChunk(chunk); 
 	process.stdout.write(reversedChunk);
 	}
 });
 
 
 
-function reverseString(chunk){
+function reverseChunk(chunk){
 	var splitedString = chunk.split('');
 	var enterSring = splitedString.pop();
 	splitedString.reverse();
 	splitedString.push(enterSring);
-	return splitedString.join("");
+	return splitedString.join('');
 }
 
 

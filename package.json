@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "task1": "nodemon src/taks1.js",
+    "task1": "nodemon src/task1.js",
     "task2": "nodemon src/task2.js",
     "build": "babel src -d dist --presets es2015"
   },
