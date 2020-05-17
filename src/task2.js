@@ -1,14 +1,17 @@
-const csv = require('csvtojson');
-const fs = require('fs');
-const path = require('path');
-const { pipeline } = require('stream');
+import { csv } from 'csvtojson';
+import { fs } from 'fs';
+import { pipeline } from 'stream';
 
 const sourceDataDir = './data/csv';
 const outDataDir = './data/text';
 
-let csvFileName = 'test.csv';
-let txtFileName = 'test.txt';
+const csvFileName = 'test.csv';
+const txtFileName = 'test.txt';
 
+
+if(!fs.existsSync(outDataDir)){
+  fs.mkdirSync(outDataDir);
+}
 
 
 pipeline(
