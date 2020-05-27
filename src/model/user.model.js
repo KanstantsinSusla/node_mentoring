@@ -1,9 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid'
 
 const users = [];
 
-module.exports = class User{
-    constructor(login, password, age){
+module.exports = class User {
+    constructor(login, password, age) {
         this.id = uuidv4();
         this.login = login;
         this.password = password;
@@ -11,29 +11,29 @@ module.exports = class User{
         this.isDeleted = false;
     }
 
-    save(){
+    save() {
         users.push(this);
     }
 
-    static getById(id){
-        for(let user of users){
-            if (user.id === id){
+    static getById(id) {
+        for (let user of users) {
+            if (user.id === id) {
                 return user;
             }
         }
     }
 
-    static getAutoSuggestUsers (loginSubstring, limit){
+    static getAutoSuggestUsers(loginSubstring, limit) {
         let count = 0;
         let result = [];
 
-        for (let user of users){
-            if (count < limit){
-                if (user.login.includes(loginSubstring)){
+        for (let user of users) {
+            if (count < limit) {
+                if (user.login.includes(loginSubstring)) {
                     result.push(user);
-                    count ++;
+                    count++;
                 }
-            }else {
+            } else {
                 break;
             }
         }
@@ -42,7 +42,7 @@ module.exports = class User{
         return result;
     }
 
-    static update (id, data){
+    static update(id, data) {
         let user = this.getById(id);
 
         user.login = data.login;
@@ -52,12 +52,12 @@ module.exports = class User{
         return user;
     }
 
-    static delete(id){
+    static delete(id) {
         let user = this.getById(id);
         user.isDelete = true;
     }
 
-    static getAll(){
+    static getAll() {
         return users;
     }
 }

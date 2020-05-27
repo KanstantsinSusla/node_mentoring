@@ -12,10 +12,10 @@ userRouter.put('/:id', validateSchema(schema), userController.updateUser);
 userRouter.delete('/:id', userController.deleteUser);
 
 
-function errorResponse (schemaErrors){
+function errorResponse(schemaErrors) {
     const errors = schemaErrors.map((error) => {
-        let { path, message } = error;
-        return { path, message };
+        let {path, message} = error;
+        return {path, message};
     });
 
     return {
@@ -24,14 +24,14 @@ function errorResponse (schemaErrors){
     };
 }
 
-function validateSchema (schema){
+function validateSchema(schema) {
     return (request, response, next) => {
-        const { error } = schema.validate(request.body, {
+        const {error} = schema.validate(request.body, {
             abortEarly: false,
             allowUnknown: false,
         });
 
-        if (error !== undefined && error.isJoi){
+        if (error !== undefined && error.isJoi) {
             response.status(400).json(errorResponse(error.details));
         } else {
             next();
