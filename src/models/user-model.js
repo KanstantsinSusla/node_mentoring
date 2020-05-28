@@ -1,4 +1,4 @@
-import {v4 as uuidv4} from 'uuid'
+import {v4 as uuidv4} from 'uuid';
 
 const users = [];
 
@@ -16,29 +16,14 @@ module.exports = class User {
     }
 
     static getById(id) {
-        for (let user of users) {
-            if (user.id === id) {
-                return user;
-            }
-        }
+        return users.find(user => user.id === id);
     }
 
     static getAutoSuggestUsers(loginSubstring, limit) {
-        let count = 0;
-        let result = [];
+        let result = users.filter(user => user.login.includes(loginSubstring));
+        result.sort();
+        result.slice(0, limit - 1);
 
-        for (let user of users) {
-            if (count < limit) {
-                if (user.login.includes(loginSubstring)) {
-                    result.push(user);
-                    count++;
-                }
-            } else {
-                break;
-            }
-        }
-
-        result.sort((a, b) => a.login > b.login ? 1 : -1);
         return result;
     }
 
@@ -54,7 +39,7 @@ module.exports = class User {
 
     static delete(id) {
         let user = this.getById(id);
-        user.isDelete = true;
+        user.isDeleted = true;
     }
 
     static getAll() {
