@@ -9,21 +9,11 @@ exports.addUser = (request, response) => {
     response.status(201).json(user);
 }
 
-exports.getAutoSuggestUsers = (request, response) => {
-    if (!request.params.login && !request.params.limit) {
-        response.status(400).send({message: 'Params can not be empty'});
-        return;
-    }
-
-    const users = User.getAutoSuggestUsers(request.params.login, request.params.limit);
-    response.status(200).json(users);
-}
-
 exports.getUserById = (request, response) => {
     const user = User.getById(request.params.id);
 
     if (!user) {
-        response.status(404).send({message: 'User is not found.'})
+        response.status(404).send({message: 'User is not found.'});
     } else {
         response.status(200).json(user);
     }
@@ -33,9 +23,9 @@ exports.getUsers = (request, response) => {
     const {limit, login} = request.query;
     let users;
 
-    if (!limit && !login) {
-        users = User.getAutoSuggestUsers(request.params.login, request.params.limit);
-        response.status(200).json(users);
+    if (limit && login) {
+        users = User.getAutoSuggestUsers(login, limit);
+        response.status(200).send({users});
     } else {
         users = User.getAll();
         response.status(200).send({users});
@@ -43,23 +33,25 @@ exports.getUsers = (request, response) => {
 }
 
 exports.updateUser = (request, response) => {
-    if (!request.params.id) {
-        response.status(400).send({message: 'Id can not be empty'});
-        return;
-    }
+    const userId = request.params.id;
 
-    const updatedUser = User.update(request.params.id, request.body);
-    response.status(200).send(updatedUser);
+    if (User.getById(userId)){
+        const updatedUser = User.update(userId, request.body);
+        response.status(200).send(updatedUser);
+    } else {
+        response.status(404).send({message: 'User is not found.'});
+    }
 }
 
 exports.deleteUser = (request, response) => {
-    if (!request.params.id) {
-        response.status(400).send({message: 'Id can not be empty'});
-        return;
-    }
+    const userId = request.params.id;
 
-    User.delete(request.params.id);
-    response.status(200).send({message: "User has been removed."});
+    if (User.getById(userId)){
+        User.delete(request.params.id);
+        response.status(200).send({message: "User has been removed."});
+    } else {
+        response.status(404).send({message: 'User is not found.'});
+    }
 }
 
 
