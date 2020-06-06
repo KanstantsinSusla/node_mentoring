@@ -1,22 +1,27 @@
-import User from '../models/user-model';
+import serviceContainer from "../containers/di-container";
+
+const userService = serviceContainer.userService;
 
 exports.addUser = (request, response) => {
-    const {login, password, age} = request.body;
+    const userDTO = request.body;
 
-    const user = new User(login, password, age);
-    user.save();
+    const user = userService.add(userDTO);
 
-    response.status(201).json(user);
+    user.then(user => {
+        response.status(201).json(user);
+    });
 }
 
 exports.getUserById = (request, response) => {
-    const user = User.getById(request.params.id);
+    const user = userService.getById(request.params.id);
 
-    if (!user) {
-        response.status(404).send({message: 'User is not found.'});
-    } else {
-        response.status(200).json(user);
-    }
+    user.then(user => {
+        if (!user) {
+            response.status(404).send({message: 'User is not found.'});
+        } else {
+            response.status(200).json(user);
+        }
+    });
 }
 
 exports.getUsers = (request, response) => {
@@ -24,20 +29,31 @@ exports.getUsers = (request, response) => {
     let users;
 
     if (limit && login) {
-        users = User.getAutoSuggestUsers(login, limit);
-        response.status(200).send({users});
+        users = userService.getAutoSuggestUsers(login, limit);
+
+        users.then(users => {
+            response.status(200).send({users});
+        })
     } else {
-        users = User.getAll();
-        response.status(200).send({users});
+        users = serviceContainer.userService.getAll();
+
+        users.then(users => {
+            response.status(200).send({users});
+        });
     }
 }
 
 exports.updateUser = (request, response) => {
     const userId = request.params.id;
 
-    if (User.getById(userId)){
-        const updatedUser = User.update(userId, request.body);
-        response.status(200).send(updatedUser);
+    const user = userService.getById(userId);
+
+    if (user) {
+        const updatedUser = userService.update(userId, request.body);
+
+        updatedUser.then(updatedUser => {
+            response.status(200).send(updatedUser);
+        })
     } else {
         response.status(404).send({message: 'User is not found.'});
     }
@@ -46,8 +62,10 @@ exports.updateUser = (request, response) => {
 exports.deleteUser = (request, response) => {
     const userId = request.params.id;
 
-    if (User.getById(userId)){
-        User.delete(request.params.id);
+    const user = userService.getById(userId);
+
+    if (user) {
+        userService.delete(request.params.id);
         response.status(200).send({message: "User has been removed."});
     } else {
         response.status(404).send({message: 'User is not found.'});

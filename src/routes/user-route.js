@@ -11,4 +11,4 @@ userRouter.get('/:id', userController.getUserById);
 userRouter.put('/:id', validateSchema(schema), userController.updateUser);
 userRouter.delete('/:id', userController.deleteUser);
 
-module.exports = userRouter;
+export default userRouter;

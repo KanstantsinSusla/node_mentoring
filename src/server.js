@@ -1,11 +1,21 @@
 import express from 'express';
 import userRoutes from './routes/user-route';
+import database from './config/database';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+database.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
 
 app.use(express.json());
 app.use('/users', userRoutes);
 
-app.listen(3000, () => {
-    console.log('listening on 3000');
+app.listen(PORT, () => {
+    console.log(`Listening on ${PORT}`);
 });

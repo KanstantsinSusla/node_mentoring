@@ -1,48 +1,48 @@
-import {v4 as uuidv4} from 'uuid';
+import Sequelize from "sequelize";
+import database from "../config/database";
+import {v4 as uuidv4} from "uuid";
 
-const users = [];
+const users = [
+    {
+        id: uuidv4(),
+        login: 'asd',
+        password: 'asd',
+        age: '12'
+    },
+    {
+        id: uuidv4(),
+        login: 'asdasdasd',
+        password: 'asdasdasd',
+        age: '134232'
+    },
+];
 
-module.exports = class User {
-    constructor(login, password, age) {
-        this.id = uuidv4();
-        this.login = login;
-        this.password = password;
-        this.age = age;
-        this.isDeleted = false;
+const User = database.define('user', {
+    id: {
+        type: Sequelize.STRING,
+        primaryKey: true,
+        allowNull: false,
+    },
+    login: {
+        type: Sequelize.STRING,
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    age: {
+        type: Sequelize.STRING
     }
+});
 
-    save() {
-        users.push(this);
+User.beforeValidate(async (user, options) => {
+    if (!user.id){
+        user.id = uuidv4();
     }
+})
 
-    static getById(id) {
-        return users.find(user => user.id === id);
-    }
+User.sync({force: true}).then(() => {
+    return User.bulkCreate(users);
+});
 
-    static getAutoSuggestUsers(loginSubstring, limit) {
-        let result = users.filter(user => user.login.includes(loginSubstring));
-        result.sort();
-        result.slice(0, limit - 1);
-
-        return result;
-    }
-
-    static update(id, data) {
-        let user = this.getById(id);
-
-        user.login = data.login;
-        user.password = data.password;
-        user.age = data.age;
-
-        return user;
-    }
-
-    static delete(id) {
-        let user = this.getById(id);
-        user.isDeleted = true;
-    }
-
-    static getAll() {
-        return users;
-    }
-}
+module.exports = User;
