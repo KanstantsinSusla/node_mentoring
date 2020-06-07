@@ -19,15 +19,21 @@ export default class UserService {
                 }
             },
             limit: limit,
+        }).then(users => {
+            return users.map(user => this.userDataMapper.toDomain(user));
         }));
     };
 
     async getById(id) {
-        return (await this.userModel.findByPk(id));
+        return (await this.userModel.findByPk(id).then(user => {
+            return this.userDataMapper.toDomain(user);
+        }));
     };
 
     async getAll() {
-        return (await this.userModel.findAll());
+        return (await this.userModel.findAll().then(users => {
+            return users.map(user => this.userDataMapper.toDomain(user));
+        }));
     }
 
     async update(id, userDTO) {
@@ -37,7 +43,7 @@ export default class UserService {
             where: {
                 id: id
             }
-        }))
+        }));
     }
 
     async delete(id) {
