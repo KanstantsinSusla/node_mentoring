@@ -1,4 +1,5 @@
-import {Op} from "sequelize";
+import { Op } from 'sequelize';
+import {} from 'express-async-errors';
 
 export default class UserService {
     constructor(userModel, userDataMapper) {
@@ -12,28 +13,26 @@ export default class UserService {
     };
 
     async getAutoSuggestUsers(login, limit) {
-        return (await this.userModel.findAll({
+        const users = await this.userModel.findAll({
             where: {
                 login: {
-                    [Op.like]: '%' + login + '%'
-                }
+                    [Op.like]: '%' + login + '%',
+                },
             },
             limit: limit,
-        }).then(users => {
-            return users.map(user => this.userDataMapper.toDomain(user));
-        }));
+        });
+
+        return users.map(user => this.userDataMapper.toDomain(user));
     };
 
     async getById(id) {
-        return (await this.userModel.findByPk(id).then(user => {
-            return this.userDataMapper.toDomain(user);
-        }));
+        const user = await this.userModel.findByPk(id);
+        return user ? this.userDataMapper.toDomain(user) : null;
     };
 
     async getAll() {
-        return (await this.userModel.findAll().then(users => {
-            return users.map(user => this.userDataMapper.toDomain(user));
-        }));
+        const users = await this.userModel.findAll();
+        return users.map(user => this.userDataMapper.toDomain(user));
     }
 
     async update(id, userDTO) {
@@ -41,16 +40,16 @@ export default class UserService {
 
         return (await this.userModel.update(updatedUser, {
             where: {
-                id: id
-            }
+                id: id,
+            },
         }));
     }
 
     async delete(id) {
         await this.userModel.destroy({
             where: {
-                id: id
-            }
-        })
+                id: id,
+            },
+        });
     }
 }

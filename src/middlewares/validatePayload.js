@@ -1,6 +1,6 @@
 exports.validateSchema = (schema) => {
     return (request, response, next) => {
-        const {error} = schema.validate(request.body, {
+        const { error } = schema.validate(request.body, {
             abortEarly: false,
             allowUnknown: false,
         });
@@ -10,17 +10,17 @@ exports.validateSchema = (schema) => {
         } else {
             next();
         }
-    }
-}
+    };
+};
 
 const errorResponse = (schemaErrors) => {
     const errors = schemaErrors.map((error) => ({
         path: error.path,
-        message: error.message
-    }))
+        message: error.message,
+    }));
 
     return {
         status: 'failed',
         errors,
     };
-}
+};
