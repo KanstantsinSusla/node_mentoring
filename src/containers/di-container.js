@@ -5,6 +5,4 @@ import UserService from '../service/user-service';
 const userDataMapper = new UserDataMapper();
 const userService = new UserService(User, userDataMapper);
 
-module.exports = {
-    userService,
-};
+export default userService;

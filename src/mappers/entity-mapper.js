@@ -1,9 +1,9 @@
 export default class EntityDataMapper {
-    toDomain(entity) {
-        return entity;
-    }
+  static toDomain(entity) {
+    return entity;
+  }
 
-    toDalEntity(domain) {
-        return domain;
-    }
+  static toDalEntity(domain) {
+    return domain;
+  }
 }
