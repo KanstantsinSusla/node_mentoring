@@ -1,58 +1,68 @@
-import User from '../models/user-model';
+import userService from '../containers/di-container';
 
-exports.addUser = (request, response) => {
-    const {login, password, age} = request.body;
+export const addUser = async (request, response) => {
+  const userDTO = request.body;
+  const user = await userService.add(userDTO);
 
-    const user = new User(login, password, age);
-    user.save();
+  response.status(201)
+    .json(user);
+};
 
-    response.status(201).json(user);
-}
+export const getUserById = async (request, response) => {
+  const user = await userService.getById(request.params.id);
 
-exports.getUserById = (request, response) => {
-    const user = User.getById(request.params.id);
+  if (!user) {
+    response.status(404)
+      .send({ message: 'User is not found.' });
+  } else {
+    response.status(200)
+      .json(user);
+  }
+};
 
-    if (!user) {
-        response.status(404).send({message: 'User is not found.'});
-    } else {
-        response.status(200).json(user);
-    }
-}
+export const getUsers = async (request, response) => {
+  const { limit, login } = request.query;
+  let users;
 
-exports.getUsers = (request, response) => {
-    const {limit, login} = request.query;
-    let users;
+  if (limit && login) {
+    users = await userService.getAutoSuggestUsers(login, limit);
+    response.status(200)
+      .send({ users });
+  } else {
+    users = await userService.getAll();
+    response.status(200)
+      .send({ users });
+  }
+};
 
-    if (limit && login) {
-        users = User.getAutoSuggestUsers(login, limit);
-        response.status(200).send({users});
-    } else {
-        users = User.getAll();
-        response.status(200).send({users});
-    }
-}
+export const updateUser = async (request, response) => {
+  const userId = request.params.id;
 
-exports.updateUser = (request, response) => {
-    const userId = request.params.id;
+  const user = await userService.getById(userId);
 
-    if (User.getById(userId)){
-        const updatedUser = User.update(userId, request.body);
-        response.status(200).send(updatedUser);
-    } else {
-        response.status(404).send({message: 'User is not found.'});
-    }
-}
+  if (user) {
+    const updatedUser = await userService.update(userId, request.body);
 
-exports.deleteUser = (request, response) => {
-    const userId = request.params.id;
+    response.status(200)
+      .send(updatedUser);
+  } else {
+    response.status(404)
+      .send({ message: 'User is not found.' });
+  }
+};
 
-    if (User.getById(userId)){
-        User.delete(request.params.id);
-        response.status(200).send({message: "User has been removed."});
-    } else {
-        response.status(404).send({message: 'User is not found.'});
-    }
-}
+export const deleteUser = async (request, response) => {
+  const userId = request.params.id;
 
+  const user = await userService.getById(userId);
 
+  if (user) {
+    await userService.delete(request.params.id);
 
+    response.status(200)
+      .send({ message: 'User has been removed.' });
+  } else {
+    response.status(404)
+      .send({ message: 'User is not found.' });
+  }
+};
