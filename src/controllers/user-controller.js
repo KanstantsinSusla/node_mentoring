@@ -41,7 +41,7 @@ export const updateUser = async (request, response) => {
   const user = await userService.getById(userId);
 
   if (user) {
-    const updatedUser = userService.update(userId, request.body);
+    const updatedUser = await userService.update(userId, request.body);
 
     response.status(200)
       .send(updatedUser);
@@ -51,13 +51,13 @@ export const updateUser = async (request, response) => {
   }
 };
 
-export const deleteUser = (request, response) => {
+export const deleteUser = async (request, response) => {
   const userId = request.params.id;
 
-  const user = userService.getById(userId);
+  const user = await userService.getById(userId);
 
   if (user) {
-    userService.delete(request.params.id);
+    await userService.delete(request.params.id);
 
     response.status(200)
       .send({ message: 'User has been removed.' });
