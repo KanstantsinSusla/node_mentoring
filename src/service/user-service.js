@@ -13,7 +13,7 @@ export default class UserService {
     try {
       return this.userModel.create(user);
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 
@@ -30,7 +30,7 @@ export default class UserService {
 
       return users.map((user) => this.userDataMapper.toDomain(user));
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 
@@ -39,7 +39,7 @@ export default class UserService {
       const user = await this.userModel.findByPk(id);
       return user && this.userDataMapper.toDomain(user);
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 
@@ -48,7 +48,7 @@ export default class UserService {
       const users = await this.userModel.findAll();
       return users.map((user) => this.userDataMapper.toDomain(user));
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 
@@ -62,7 +62,7 @@ export default class UserService {
         },
       });
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 
@@ -74,7 +74,7 @@ export default class UserService {
         },
       });
     } catch (e) {
-      throw new ServiceError(`User service error: ${e.message}`);
+      throw new ServiceError(e.message);
     }
   }
 }

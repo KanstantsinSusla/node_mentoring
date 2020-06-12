@@ -38,7 +38,7 @@ export const getUsers = async (request, response) => {
 export const updateUser = async (request, response) => {
   const userId = request.params.id;
 
-  const user = userService.getById(userId);
+  const user = await userService.getById(userId);
 
   if (user) {
     const updatedUser = userService.update(userId, request.body);
