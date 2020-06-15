@@ -1,4 +1,4 @@
-import userService from '../containers/di-container';
+import { userService } from '../containers/di-container';
 
 export const addUser = async (request, response) => {
   const userDTO = request.body;
