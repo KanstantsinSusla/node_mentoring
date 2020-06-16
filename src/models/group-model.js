@@ -30,12 +30,12 @@ const Group = database.define('group', {
   },
 });
 
-// Group.beforeValidate((group) => {
-//   const incomingGroup = group;
-//   if (!incomingGroup.id) {
-//     incomingGroup.id = uuidv4();
-//   }
-// });
+Group.beforeValidate((group) => {
+  const incomingGroup = group;
+  if (!incomingGroup.id) {
+    incomingGroup.id = uuidv4();
+  }
+});
 
 Group.sync({ force: true })
   .then(() => Group.bulkCreate(groups));

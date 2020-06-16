@@ -1,9 +1,11 @@
+import database from '../config/database';
 import ServiceError from '../errors/service-error';
 
 export default class GroupService {
-  constructor(groupModel, groupDataMapper) {
+  constructor(groupModel, groupDataMapper, userModel) {
     this.groupModel = groupModel;
     this.groupDataMapper = groupDataMapper;
+    this.userModel = userModel;
   }
 
   async add(groupDTO) {
@@ -12,6 +14,24 @@ export default class GroupService {
     try {
       return this.groupModel.create(group);
     } catch (e) {
+      throw new ServiceError(e.message);
+    }
+  }
+
+  async addUsersToGroup(groupId, userIds) {
+    const t = await database.transaction();
+
+    try {
+      const group = await this.groupModel.findByPk(groupId);
+      const users = await Promise.all(
+        userIds.map(async (userId) => this.userModel.findByPk(userId)),
+      );
+
+      await group.addUsers(users, { through: { selfGranted: false } }, { transaction: t });
+
+      await t.commit();
+    } catch (e) {
+      await t.rollback();
       throw new ServiceError(e.message);
     }
   }

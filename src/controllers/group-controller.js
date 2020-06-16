@@ -8,6 +8,15 @@ export const addGroup = async (request, response) => {
     .json(group);
 };
 
+export const addUsersToGroup = async (request, response) => {
+  const { groupId, userIds } = request.body;
+
+  await groupService.addUsersToGroup(groupId, userIds);
+
+  response.status(200)
+    .send({ message: 'Users are added to group' });
+};
+
 export const getGroupById = async (request, response) => {
   const group = await groupService.getById(request.params.id);
 
