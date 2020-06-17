@@ -9,12 +9,18 @@ export const addGroup = async (request, response) => {
 };
 
 export const addUsersToGroup = async (request, response) => {
-  const { groupId, userIds } = request.body;
+  const groupId = request.params.id;
+  const { userIds } = request.body;
 
-  await groupService.addUsersToGroup(groupId, userIds);
+  const isUsersAdded = await groupService.addUsersToGroup(groupId, userIds);
 
-  response.status(200)
-    .send({ message: 'Users are added to group' });
+  if (isUsersAdded) {
+    response.status(200)
+      .send({ message: 'Users are added to group' });
+  } else {
+    response.status(400)
+      .send({ message: 'Users are not added to group.' });
+  }
 };
 
 export const getGroupById = async (request, response) => {

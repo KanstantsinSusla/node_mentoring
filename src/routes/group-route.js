@@ -8,7 +8,7 @@ import validateSchema from '../middlewares/validatePayload';
 const groupRouter = express.Router();
 
 groupRouter.post('/', validateSchema(schema), addGroup);
-groupRouter.post('/add-users-to-group', addUsersToGroup);
+groupRouter.post('/:id/users', addUsersToGroup);
 groupRouter.get('/', getGroups);
 groupRouter.get('/:id', getGroupById);
 groupRouter.put('/:id', validateSchema(schema), updateGroup);

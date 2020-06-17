@@ -4,6 +4,6 @@ export default Joi.object()
   .keys({
     name: Joi.string()
       .required(),
-    password: Joi.array().items(Joi.string())
+    permissions: Joi.array().items(Joi.string())
       .required(),
   });

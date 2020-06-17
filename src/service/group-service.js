@@ -19,7 +19,7 @@ export default class GroupService {
   }
 
   async addUsersToGroup(groupId, userIds) {
-    const t = await database.transaction();
+    const transaction = await database.transaction();
 
     try {
       const group = await this.groupModel.findByPk(groupId);
@@ -27,11 +27,14 @@ export default class GroupService {
         userIds.map(async (userId) => this.userModel.findByPk(userId)),
       );
 
-      await group.addUsers(users, { through: { selfGranted: false } }, { transaction: t });
-
-      await t.commit();
+      if (!group || !users) {
+        return false;
+      }
+      await group.addUsers(users, { through: { selfGranted: false } }, { transaction });
+      await transaction.commit();
+      return true;
     } catch (e) {
-      await t.rollback();
+      await transaction.rollback();
       throw new ServiceError(e.message);
     }
   }
@@ -62,6 +65,7 @@ export default class GroupService {
         where: {
           id,
         },
+        returning: true,
       });
     } catch (e) {
       throw new ServiceError(e.message);
