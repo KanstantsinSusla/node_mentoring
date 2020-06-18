@@ -1,6 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import userRoutes from './routes/user-route';
+import groupRoutes from './routes/group-route';
 import database from './config/database';
 
 const app = express();
@@ -16,6 +17,7 @@ database.authenticate()
 
 app.use(express.json());
 app.use('/users', userRoutes);
+app.use('/groups', groupRoutes);
 
 app.use((err, req, res, next) => {
   res.status(500);

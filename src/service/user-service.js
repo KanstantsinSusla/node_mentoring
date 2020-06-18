@@ -60,6 +60,7 @@ export default class UserService {
         where: {
           id,
         },
+        returning: true,
       });
     } catch (e) {
       throw new ServiceError(e.message);
