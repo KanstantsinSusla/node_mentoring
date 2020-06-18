@@ -27,7 +27,7 @@ export default class GroupService {
         userIds.map(async (userId) => this.userModel.findByPk(userId)),
       );
 
-      if (!group || !users) {
+      if (!group || !users || !users.length) {
         return false;
       }
       await group.addUsers(users, { through: { selfGranted: false } }, { transaction });
