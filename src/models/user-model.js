@@ -43,6 +43,6 @@ User.beforeValidate((user) => {
 });
 
 User.sync({ force: true })
-  .then(() => User.bulkCreate(users));
+  .then(() => User.bulkCreate(users, { returning: true }));
 
 export default User;
