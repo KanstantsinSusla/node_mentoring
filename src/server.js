@@ -4,7 +4,7 @@ import userRoutes from './routes/user-route';
 import groupRoutes from './routes/group-route';
 import database from './config/database';
 import { serviceMethodLogger, errorHandler } from './middlewares/serviceMethodLogger';
-import logger from './loggers/winstonLogger';
+import logger from './loggers/logger';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

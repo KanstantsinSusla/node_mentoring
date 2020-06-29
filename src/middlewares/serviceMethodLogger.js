@@ -1,4 +1,4 @@
-import logger from '../loggers/winstonLogger';
+import logger from '../loggers/logger';
 
 const serviceMethodLogger = (req, res, next) => {
   logger.log('Request Type:', req.method);
