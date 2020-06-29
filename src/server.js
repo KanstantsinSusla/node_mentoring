@@ -3,8 +3,8 @@ import 'express-async-errors';
 import userRoutes from './routes/user-route';
 import groupRoutes from './routes/group-route';
 import database from './config/database';
-import serviceMethodLogger from './middlewares/serviceMethodLogger';
-import logger from './loggers/errorLogger';
+import { serviceMethodLogger, errorHandler } from './middlewares/serviceMethodLogger';
+import logger from './loggers/winstonLogger';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,25 +21,7 @@ app.use(express.json());
 app.use(serviceMethodLogger);
 app.use('/users', userRoutes);
 app.use('/groups', groupRoutes);
-
-app.use((err, req, res, next) => {
-  const {
-    originalUrl, method, headers, query, params, body, id,
-  } = req;
-  logger.log('error', `HTTP ${method} ${originalUrl}`, {
-    requestId: id,
-    headers,
-    query,
-    params,
-    body,
-  });
-
-  res.status(500);
-  res.send({ message: err.message });
-
-  next(err);
-});
-
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   logger.info(`Listening on ${PORT}`);

@@ -1,8 +1,28 @@
+import logger from '../loggers/winstonLogger';
+
 const serviceMethodLogger = (req, res, next) => {
-  console.log('Request Type:', req.method);
-  console.log('URL: ', req.originalUrl);
-  console.log('Request parameters: ', req.params);
+  logger.log('Request Type:', req.method);
+  logger.log('URL: ', req.originalUrl);
+  logger.log('Request parameters: ', req.params);
   next();
 };
 
-export default serviceMethodLogger;
+const errorHandler = (err, req, res, next) => {
+  const {
+    originalUrl, method, headers, query, params, body, id,
+  } = req;
+  logger.log('error', `HTTP ${method} ${originalUrl}`, {
+    requestId: id,
+    headers,
+    query,
+    params,
+    body,
+  });
+
+  res.status(500);
+  res.send({ message: err.message });
+
+  next(err);
+};
+
+export { serviceMethodLogger, errorHandler };
