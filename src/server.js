@@ -3,30 +3,40 @@ import 'express-async-errors';
 import userRoutes from './routes/user-route';
 import groupRoutes from './routes/group-route';
 import database from './config/database';
+import { serviceMethodLogger, errorHandler } from './middlewares/serviceMethodLogger';
+import logger from './loggers/logger';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 database.authenticate()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    logger.info('Connection has been established successfully.');
   })
   .catch((err) => {
-    console.error('Unable to connect to the database:', err);
+    logger.error('Unable to connect to the database:', err);
   });
 
 app.use(express.json());
+app.use(serviceMethodLogger);
 app.use('/users', userRoutes);
 app.use('/groups', groupRoutes);
+app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-  res.status(500);
-  res.send({ message: err.message });
-
-  next(err);
+const server = app.listen(PORT, () => {
+  logger.info(`Listening on ${PORT}`);
 });
 
+process
+  .on('unhandledRejection', (reason) => {
+    logger.error(`Unhandled Rejection at Promise ${reason}`);
+  })
+  .on('uncaughtException', (err) => {
+    logger.error(`Uncaught Exception thrown ${err}`);
 
-app.listen(PORT, () => {
-  console.log(`Listening on ${PORT}`);
-});
+    server.close(() => {
+      database.close();
+    });
+
+    process.exit(1);
+  });

@@ -38,6 +38,6 @@ Group.beforeValidate((group) => {
 });
 
 Group.sync({ force: true })
-  .then(() => Group.bulkCreate(groups));
+  .then(() => Group.bulkCreate(groups), { returning: true });
 
 export default Group;
