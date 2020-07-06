@@ -1,5 +1,32 @@
 import { userService } from '../containers/di-container';
 
+export const userLogin = async (request, response) => {
+  const { login, password } = request.body;
+
+  const user = await userService.getByLogin(login);
+
+  if (!user) {
+    response.status(404)
+      .send({ message: 'User is not found.' });
+  }
+
+  if (password !== user.password) {
+    response.status(400)
+      .send({ message: 'Incorrect password.' });
+  }
+
+  const accessToken = await userService.userLogin(user);
+
+  if (accessToken) {
+    response.status(200).json({
+      accessToken,
+      tokenType: 'Bearer',
+    });
+  } else {
+    response.status(403).send({ message: 'Bad client credentials' });
+  }
+};
+
 export const addUser = async (request, response) => {
   const userDTO = request.body;
   const user = await userService.add(userDTO);

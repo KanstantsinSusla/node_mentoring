@@ -1,9 +1,10 @@
 import logger from '../loggers/logger';
 
 const serviceMethodLogger = (req, res, next) => {
-  logger.log('Request Type:', req.method);
-  logger.log('URL: ', req.originalUrl);
-  logger.log('Request parameters: ', req.params);
+  const { method, originalUrl, params } = req;
+  logger.log('info', { method });
+  logger.log('info', { originalUrl });
+  logger.log('info', { params });
   next();
 };
 

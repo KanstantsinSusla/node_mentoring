@@ -25,6 +25,7 @@ const User = database.define('user', {
   },
   login: {
     type: Sequelize.STRING,
+    unique: true,
   },
   password: {
     type: Sequelize.STRING,
@@ -33,6 +34,8 @@ const User = database.define('user', {
   age: {
     type: Sequelize.STRING,
   },
+}, {
+  indexes: [{ fields: ['login'] }],
 });
 
 User.beforeValidate((user) => {

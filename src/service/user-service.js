@@ -2,9 +2,19 @@ import { Op } from 'sequelize';
 import ServiceError from '../errors/service-error';
 
 export default class UserService {
-  constructor(userModel, userDataMapper) {
+  constructor(userModel, userDataMapper, jwt) {
     this.userModel = userModel;
     this.userDataMapper = userDataMapper;
+    this.jwt = jwt;
+  }
+
+  async userLogin(user) {
+    const payload = {
+      user: user.login,
+      age: user.age,
+    };
+
+    return this.jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
   }
 
   async add(userDTO) {
@@ -38,6 +48,14 @@ export default class UserService {
     try {
       const user = await this.userModel.findByPk(id);
       return user && this.userDataMapper.toDomain(user);
+    } catch (e) {
+      throw new ServiceError(e.message);
+    }
+  }
+
+  async getByLogin(login) {
+    try {
+      return await this.userModel.findOne({ where: { login } });
     } catch (e) {
       throw new ServiceError(e.message);
     }
