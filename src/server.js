@@ -1,5 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
+import cors from 'cors';
+import authenticateToken from './middlewares/authorization';
 import userRoutes from './routes/user-route';
 import groupRoutes from './routes/group-route';
 import database from './config/database';
@@ -17,6 +19,8 @@ database.authenticate()
     logger.error('Unable to connect to the database:', err);
   });
 
+app.use(cors());
+app.use(authenticateToken);
 app.use(express.json());
 app.use(serviceMethodLogger);
 app.use('/users', userRoutes);
