@@ -1,20 +1,21 @@
+import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import ServiceError from '../errors/service-error';
 
 export default class UserService {
-  constructor(userModel, userDataMapper, jwt) {
+  constructor(userModel, userDataMapper) {
     this.userModel = userModel;
     this.userDataMapper = userDataMapper;
-    this.jwt = jwt;
   }
 
-  async userLogin(user) {
+  static async userLogin(user) {
     const payload = {
       user: user.login,
       age: user.age,
     };
 
-    return this.jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.TOKEN_EXPIRATION_TIME });
   }
 
   async add(userDTO) {
