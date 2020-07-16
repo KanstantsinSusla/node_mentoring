@@ -1,30 +1,27 @@
 import database from '../config/database';
 import ServiceError from '../errors/service-error';
+import GroupDataMapper from '../mappers/group-mapper';
+import Group from '../models/group-model';
+import User from '../models/user-model';
 
 export default class GroupService {
-  constructor(groupModel, groupDataMapper, userModel) {
-    this.groupModel = groupModel;
-    this.groupDataMapper = groupDataMapper;
-    this.userModel = userModel;
-  }
-
-  async add(groupDTO) {
-    const group = this.groupDataMapper.toDalEntity(groupDTO);
+  static async add(groupDTO) {
+    const group = GroupDataMapper.toDalEntity(groupDTO);
 
     try {
-      return this.groupModel.create(group);
+      return Group.create(group);
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async addUsersToGroup(groupId, userIds) {
+  static async addUsersToGroup(groupId, userIds) {
     const transaction = await database.transaction();
 
     try {
-      const group = await this.groupModel.findByPk(groupId);
+      const group = await Group.findByPk(groupId);
       const users = await Promise.all(
-        userIds.map(async (userId) => this.userModel.findByPk(userId)),
+        userIds.map(async (userId) => User.findByPk(userId)),
       );
 
       if (!group || !users || !users.length) {
@@ -39,29 +36,29 @@ export default class GroupService {
     }
   }
 
-  async getById(id) {
+  static async getById(id) {
     try {
-      const group = await this.groupModel.findByPk(id);
-      return group && this.groupDataMapper.toDomain(group);
+      const group = await Group.findByPk(id);
+      return group && GroupDataMapper.toDomain(group);
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async getAll() {
+  static async getAll() {
     try {
-      const groups = await this.groupModel.findAll();
-      return groups.map((group) => this.groupDataMapper.toDomain(group));
+      const groups = await Group.findAll();
+      return groups.map((group) => GroupDataMapper.toDomain(group));
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async update(id, groupDTO) {
-    const updatedGroup = this.groupDataMapper.toDalEntity(groupDTO);
+  static async update(id, groupDTO) {
+    const updatedGroup = GroupDataMapper.toDalEntity(groupDTO);
 
     try {
-      return this.groupModel.update(updatedGroup, {
+      return Group.update(updatedGroup, {
         where: {
           id,
         },
@@ -72,9 +69,9 @@ export default class GroupService {
     }
   }
 
-  async delete(id) {
+  static async delete(id) {
     try {
-      await this.groupModel.destroy({
+      await Group.destroy({
         where: {
           id,
         },

@@ -1,8 +1,8 @@
-import { groupService } from '../containers/di-container';
+import GroupService from '../service/group-service';
 
 export const addGroup = async (request, response) => {
   const groupDTO = request.body;
-  const group = await groupService.add(groupDTO);
+  const group = await GroupService.add(groupDTO);
 
   response.status(201)
     .json(group);
@@ -12,7 +12,7 @@ export const addUsersToGroup = async (request, response) => {
   const groupId = request.params.id;
   const { userIds } = request.body;
 
-  const isUsersAdded = await groupService.addUsersToGroup(groupId, userIds);
+  const isUsersAdded = await GroupService.addUsersToGroup(groupId, userIds);
 
   if (isUsersAdded) {
     response.status(200)
@@ -24,7 +24,7 @@ export const addUsersToGroup = async (request, response) => {
 };
 
 export const getGroupById = async (request, response) => {
-  const group = await groupService.getById(request.params.id);
+  const group = await GroupService.getById(request.params.id);
 
   if (!group) {
     response.status(404)
@@ -36,7 +36,7 @@ export const getGroupById = async (request, response) => {
 };
 
 export const getGroups = async (request, response) => {
-  const groups = await groupService.getAll();
+  const groups = await GroupService.getAll();
   response.status(200)
     .send({ groups });
 };
@@ -44,10 +44,10 @@ export const getGroups = async (request, response) => {
 export const updateGroup = async (request, response) => {
   const groupId = request.params.id;
 
-  const group = await groupService.getById(groupId);
+  const group = await GroupService.getById(groupId);
 
   if (group) {
-    const updatedGroup = await groupService.update(groupId, request.body);
+    const updatedGroup = await GroupService.update(groupId, request.body);
 
     response.status(200)
       .send(updatedGroup);
@@ -60,10 +60,10 @@ export const updateGroup = async (request, response) => {
 export const deleteGroup = async (request, response) => {
   const groupId = request.params.id;
 
-  const group = await groupService.getById(groupId);
+  const group = await GroupService.getById(groupId);
 
   if (group) {
-    await groupService.delete(request.params.id);
+    await GroupService.delete(request.params.id);
 
     response.status(200)
       .send({ message: 'Group has been removed.' });
