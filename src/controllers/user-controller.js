@@ -1,9 +1,10 @@
+import { userService } from '../containers/di-container';
 import UserService from '../service/user-service';
 
 export const userLogin = async (request, response) => {
   const { login, password } = request.body;
 
-  const user = await UserService.getByLogin(login);
+  const user = await userService.getByLogin(login);
 
   if (!user || password !== user.password) {
     response.status(401)
@@ -21,14 +22,14 @@ export const userLogin = async (request, response) => {
 
 export const addUser = async (request, response) => {
   const userDTO = request.body;
-  const user = await UserService.add(userDTO);
+  const user = await userService.add(userDTO);
 
   response.status(201)
     .json(user);
 };
 
 export const getUserById = async (request, response) => {
-  const user = await UserService.getById(request.params.id);
+  const user = await userService.getById(request.params.id);
 
   if (!user) {
     response.status(404)
@@ -44,11 +45,11 @@ export const getUsers = async (request, response) => {
   let users;
 
   if (limit && login) {
-    users = await UserService.getAutoSuggestUsers(login, limit);
+    users = await userService.getAutoSuggestUsers(login, limit);
     response.status(200)
       .send({ users });
   } else {
-    users = await UserService.getAll();
+    users = await userService.getAll();
     response.status(200)
       .send({ users });
   }
@@ -57,10 +58,10 @@ export const getUsers = async (request, response) => {
 export const updateUser = async (request, response) => {
   const userId = request.params.id;
 
-  const user = await UserService.getById(userId);
+  const user = await userService.getById(userId);
 
   if (user) {
-    const updatedUser = await UserService.update(userId, request.body);
+    const updatedUser = await userService.update(userId, request.body);
 
     response.status(200)
       .send(updatedUser);
@@ -73,10 +74,10 @@ export const updateUser = async (request, response) => {
 export const deleteUser = async (request, response) => {
   const userId = request.params.id;
 
-  const user = await UserService.getById(userId);
+  const user = await userService.getById(userId);
 
   if (user) {
-    await UserService.delete(request.params.id);
+    await userService.delete(request.params.id);
 
     response.status(200)
       .send({ message: 'User has been removed.' });
