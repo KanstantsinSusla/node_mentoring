@@ -15,321 +15,289 @@ jest.mock('../../src/service/group-service', () => ({
 }));
 
 
-test('gets all groups', async () => {
-  const request = {};
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+describe('group controller', () => {
+  let response;
 
-  const allGroups = [{ name: 'group' }];
-  GroupService.getAll.mockResolvedValueOnce(allGroups);
+  beforeEach(() => {
+    response = {
+      status: jest.fn(() => response),
+      json: jest.fn(),
+      send: jest.fn(),
+    };
+  });
 
-  await getGroups(request, response, next);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ groups: allGroups });
-});
+  test('gets all groups', async () => {
+    const request = {};
 
-test('gets all groups if groups are not exist', async () => {
-  const request = {};
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  const groups = null;
-  GroupService.getAll.mockResolvedValueOnce(groups);
+    const allGroups = [{ name: 'group' }];
+    GroupService.getAll.mockResolvedValueOnce(allGroups);
 
-  await getGroups(request, response, next);
+    await getGroups(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ groups });
-});
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ groups: allGroups });
+  });
 
-test('adds user to group', async () => {
-  const id = uuidv4();
-  const userIds = ['123', '34535'];
+  test('gets all groups if groups are not exist', async () => {
+    const request = {};
 
-  const request = {
-    params: {
-      id,
-      login: 'text',
-    },
-    body: {
-      userIds,
-    },
-  };
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  GroupService.addUsersToGroup.mockResolvedValueOnce(id, userIds);
+    const groups = null;
+    GroupService.getAll.mockResolvedValueOnce(groups);
 
-  await addUsersToGroup(request, response, next);
+    await getGroups(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Users are added to group' });
-});
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ groups });
+  });
 
-test('adds user to group when users are not added', async () => {
-  const id = uuidv4();
-  const userIds = ['123', '34535'];
+  test('adds user to group', async () => {
+    const id = uuidv4();
+    const userIds = ['123', '34535'];
 
-  const request = {
-    params: {
-      id,
-      login: 'text',
-    },
-    body: {
-      userIds,
-    },
-  };
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    const request = {
+      params: {
+        id,
+        login: 'text',
+      },
+      body: {
+        userIds,
+      },
+    };
 
-  GroupService.addUsersToGroup.mockResolvedValueOnce(null);
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  await addUsersToGroup(request, response, next);
+    GroupService.addUsersToGroup.mockResolvedValueOnce(id, userIds);
 
-  expect(response.status).toHaveBeenCalledWith(400);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Users are not added to group.' });
-});
+    await addUsersToGroup(request, response, next);
 
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Users are added to group' });
+  });
 
-test('gets group by ID', async () => {
-  const id = uuidv4();
+  test('adds user to group when users are not added', async () => {
+    const id = uuidv4();
+    const userIds = ['123', '34535'];
 
-  const request = {
-    params: {
-      id,
-    },
-  };
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    const request = {
+      params: {
+        id,
+        login: 'text',
+      },
+      body: {
+        userIds,
+      },
+    };
 
-  const group = { id };
-  GroupService.getById.mockResolvedValueOnce(group);
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  await getGroupById(request, response, next);
+    GroupService.addUsersToGroup.mockResolvedValueOnce(null);
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.json).toHaveBeenCalledTimes(1);
-  expect(response.json.mock.calls.length).toBe(1);
-  expect(response.json).toHaveBeenCalledWith(group);
-});
+    await addUsersToGroup(request, response, next);
 
-test('gets group by ID with when group is not exist', async () => {
-  const request = {
-    params: {
-      id: null,
-    },
-  };
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
-
-  const group = null;
-
-  GroupService.getById.mockResolvedValueOnce(group);
-
-  await getGroupById(request, response, next);
-
-  expect(response.status).toHaveBeenCalledWith(404);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
-});
+    expect(response.status).toHaveBeenCalledWith(400);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Users are not added to group.' });
+  });
 
 
-test('adds group', async () => {
-  const name = 'test_name';
-  const permissions = ['READ', 'WRITE'];
+  test('gets group by ID', async () => {
+    const id = uuidv4();
 
-  const request = {
-    body: {
-      name,
-      permissions,
-    },
-  };
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    const request = {
+      params: {
+        id,
+      },
+    };
 
-  const addedGroup = { name, permissions };
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  GroupService.add.mockResolvedValueOnce(addedGroup);
+    const group = { id };
+    GroupService.getById.mockResolvedValueOnce(group);
 
-  await addGroup(request, response, next);
+    await getGroupById(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(201);
-  expect(response.json).toHaveBeenCalledTimes(1);
-  expect(response.json.mock.calls.length).toBe(1);
-});
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.json).toHaveBeenCalledTimes(1);
+    expect(response.json.mock.calls.length).toBe(1);
+    expect(response.json).toHaveBeenCalledWith(group);
+  });
 
-test('updates group', async () => {
-  const id = uuidv4();
-  const name = 'test_name';
-  const permissions = ['READ', 'WRITE'];
+  test('gets group by ID with when group is not exist', async () => {
+    const request = {
+      params: {
+        id: null,
+      },
+    };
 
-  const request = {
-    params: {
-      id,
-    },
-    body: {
-      name,
-      permissions,
-    },
-  };
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    const group = null;
 
-  const targetGroup = { id };
-  const updatedGroup = {
-    id, name, permissions,
-  };
-  GroupService.getById.mockResolvedValueOnce(targetGroup);
-  GroupService.update.mockResolvedValueOnce(updatedGroup);
+    GroupService.getById.mockResolvedValueOnce(group);
 
-  await updateGroup(request, response, next);
+    await getGroupById(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-});
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
+  });
 
 
-test('updates group when group is not exist', async () => {
-  const id = uuidv4();
-  const name = 'test_name';
-  const permissions = ['READ', 'WRITE'];
+  test('adds group', async () => {
+    const name = 'test_name';
+    const permissions = ['READ', 'WRITE'];
 
-  const request = {
-    params: {
-      id,
-    },
-    body: {
-      name,
-      permissions,
-    },
-  };
+    const request = {
+      body: {
+        name,
+        permissions,
+      },
+    };
 
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  const targetGroup = null;
-  GroupService.getById.mockResolvedValueOnce(targetGroup);
+    const addedGroup = { name, permissions };
 
-  await updateGroup(request, response, next);
+    GroupService.add.mockResolvedValueOnce(addedGroup);
 
-  expect(response.status).toHaveBeenCalledWith(404);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
-});
+    await addGroup(request, response, next);
 
+    expect(response.status).toHaveBeenCalledWith(201);
+    expect(response.json).toHaveBeenCalledTimes(1);
+    expect(response.json.mock.calls.length).toBe(1);
+  });
 
-test('deletes group', async () => {
-  const id = uuidv4();
+  test('updates group', async () => {
+    const id = uuidv4();
+    const name = 'test_name';
+    const permissions = ['READ', 'WRITE'];
 
-  const request = {
-    params: {
-      id,
-    },
-  };
+    const request = {
+      params: {
+        id,
+      },
+      body: {
+        name,
+        permissions,
+      },
+    };
 
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  const targetGroup = { id };
-  GroupService.getById.mockResolvedValueOnce(targetGroup);
-  GroupService.delete.mockResolvedValueOnce(targetGroup);
+    const targetGroup = { id };
+    const updatedGroup = {
+      id, name, permissions,
+    };
+    GroupService.getById.mockResolvedValueOnce(targetGroup);
+    GroupService.update.mockResolvedValueOnce(updatedGroup);
 
-  await deleteGroup(request, response, next);
+    await updateGroup(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(200);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Group has been removed.' });
-});
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+  });
 
 
-test('deletes group when group is not exist', async () => {
-  const id = uuidv4();
+  test('updates group when group is not exist', async () => {
+    const id = uuidv4();
+    const name = 'test_name';
+    const permissions = ['READ', 'WRITE'];
 
-  const request = {
-    params: {
-      id,
-    },
-  };
+    const request = {
+      params: {
+        id,
+      },
+      body: {
+        name,
+        permissions,
+      },
+    };
 
-  const response = {
-    status: jest.fn(() => response),
-    json: jest.fn(),
-    send: jest.fn(),
-  };
-  response.status.mockReturnValueOnce(response);
-  const next = jest.fn();
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
 
-  const targetGroup = null;
-  GroupService.getById.mockResolvedValueOnce(targetGroup);
+    const targetGroup = null;
+    GroupService.getById.mockResolvedValueOnce(targetGroup);
 
-  await deleteGroup(request, response, next);
+    await updateGroup(request, response, next);
 
-  expect(response.status).toHaveBeenCalledWith(404);
-  expect(response.send).toHaveBeenCalledTimes(1);
-  expect(response.send.mock.calls.length).toBe(1);
-  expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
+  });
+
+
+  test('deletes group', async () => {
+    const id = uuidv4();
+
+    const request = {
+      params: {
+        id,
+      },
+    };
+
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
+
+    const targetGroup = { id };
+    GroupService.getById.mockResolvedValueOnce(targetGroup);
+    GroupService.delete.mockResolvedValueOnce(targetGroup);
+
+    await deleteGroup(request, response, next);
+
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Group has been removed.' });
+  });
+
+
+  test('deletes group when group is not exist', async () => {
+    const id = uuidv4();
+
+    const request = {
+      params: {
+        id,
+      },
+    };
+
+    response.status.mockReturnValueOnce(response);
+    const next = jest.fn();
+
+    const targetGroup = null;
+    GroupService.getById.mockResolvedValueOnce(targetGroup);
+
+    await deleteGroup(request, response, next);
+
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.send).toHaveBeenCalledTimes(1);
+    expect(response.send.mock.calls.length).toBe(1);
+    expect(response.send).toHaveBeenCalledWith({ message: 'Group is not found.' });
+  });
 });
