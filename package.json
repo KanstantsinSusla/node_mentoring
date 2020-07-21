@@ -7,6 +7,7 @@
     "start": "nodemon index.js",
     "server": "nodemon -r dotenv/config --exec babel-node src/server.js",
     "build": "babel src -d dist",
+    "test": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -29,9 +30,11 @@
     "@babel/core": "^7.9.6",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.6",
+    "babel-polyfill": "^6.26.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
+    "jest": "^26.1.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
   },

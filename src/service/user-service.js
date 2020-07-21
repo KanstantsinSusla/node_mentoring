@@ -1,13 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import ServiceError from '../errors/service-error';
+import User from '../models/user-model';
+import UserDataMapper from '../mappers/user-mapper';
 
 export default class UserService {
-  constructor(userModel, userDataMapper) {
-    this.userModel = userModel;
-    this.userDataMapper = userDataMapper;
-  }
-
   static async userLogin(user) {
     const payload = {
       user: user.login,
@@ -18,19 +15,19 @@ export default class UserService {
       { expiresIn: process.env.TOKEN_EXPIRATION_TIME });
   }
 
-  async add(userDTO) {
-    const user = this.userDataMapper.toDalEntity(userDTO);
+  static async add(userDTO) {
+    const user = UserDataMapper.toDalEntity(userDTO);
 
     try {
-      return this.userModel.create(user);
+      return await User.create(user);
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async getAutoSuggestUsers(login, limit) {
+  static async getAutoSuggestUsers(login, limit) {
     try {
-      const users = await this.userModel.findAll({
+      const users = await User.findAll({
         where: {
           login: {
             [Op.like]: `%${login}%`,
@@ -39,43 +36,43 @@ export default class UserService {
         limit,
       });
 
-      return users.map((user) => this.userDataMapper.toDomain(user));
+      return users.map((user) => UserDataMapper.toDomain(user));
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async getById(id) {
+  static async getById(id) {
     try {
-      const user = await this.userModel.findByPk(id);
-      return user && this.userDataMapper.toDomain(user);
+      const user = await User.findByPk(id);
+      return user && UserDataMapper.toDomain(user);
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async getByLogin(login) {
+  static async getByLogin(login) {
     try {
-      return await this.userModel.findOne({ where: { login } });
+      return await User.findOne({ where: { login } });
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async getAll() {
+  static async getAll() {
     try {
-      const users = await this.userModel.findAll();
-      return users.map((user) => this.userDataMapper.toDomain(user));
+      const users = await User.findAll();
+      return users.map((user) => UserDataMapper.toDomain(user));
     } catch (e) {
       throw new ServiceError(e.message);
     }
   }
 
-  async update(id, userDTO) {
-    const updatedUser = this.userDataMapper.toDalEntity(userDTO);
+  static async update(id, userDTO) {
+    const updatedUser = UserDataMapper.toDalEntity(userDTO);
 
     try {
-      return this.userModel.update(updatedUser, {
+      return User.update(updatedUser, {
         where: {
           id,
         },
@@ -86,9 +83,9 @@ export default class UserService {
     }
   }
 
-  async delete(id) {
+  static async delete(id) {
     try {
-      await this.userModel.destroy({
+      await User.destroy({
         where: {
           id,
         },
